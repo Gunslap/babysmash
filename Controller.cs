@@ -115,7 +115,14 @@ namespace BabySmash
                 }
             }
 
-            foreach (WinForms.Screen s in WinForms.Screen.AllScreens)
+            // BabySmash can be difficult to debug due to the aggressive manner it tries to full-screen and focus steal
+            // to keep smashed input from wreaking as much havoc on your system as it could. Compensate for this by
+            // automatically reserving one screen for debugging, so you can keep your debugger up on that one.
+            // TODO: If you only have one screen available, instead let BabySmash be windowed while debugging?
+            int skipScreens = Debugger.IsAttached && WinForms.Screen.AllScreens.Length > 1 ? 1 : 0;
+            List<WinForms.Screen> appScreens = WinForms.Screen.AllScreens.Skip(skipScreens).ToList();
+
+            foreach (WinForms.Screen s in appScreens)
             {
                 MainWindow m = new MainWindow(this)
                 {
@@ -407,7 +414,7 @@ namespace BabySmash
         /// </summary>
         public static string GetLocalizedString(string key)
         {
-            CultureInfo keyboardLanguage = System.Windows.Forms.InputLanguage.CurrentInputLanguage.Culture;
+            CultureInfo keyboardLanguage = WinForms.InputLanguage.CurrentInputLanguage.Culture;
             string culture = keyboardLanguage.Name;
             string path = $@"Resources\Strings\{culture}.json";
             string path2 = @"Resources\Strings\en-EN.json";
@@ -431,7 +438,7 @@ namespace BabySmash
             }
             else
             {
-                System.Diagnostics.Debug.Assert(false, "No file");
+                Debug.Assert(false, "No file");
             }
 
             return key;
@@ -455,7 +462,7 @@ namespace BabySmash
             public ThreadedSpeak(string Word)
             {
                 this.Word = Word;
-                CultureInfo keyboardLanguage = System.Windows.Forms.InputLanguage.CurrentInputLanguage.Culture;
+                CultureInfo keyboardLanguage = WinForms.InputLanguage.CurrentInputLanguage.Culture;
                 InstalledVoice neededVoice = this.SpeechSynth.GetInstalledVoices(keyboardLanguage).FirstOrDefault();
                 if (neededVoice == null)
                 {
@@ -496,7 +503,7 @@ namespace BabySmash
                 }
                 catch (Exception e)
                 {
-                    System.Diagnostics.Trace.WriteLine(e.ToString());
+                    Trace.WriteLine(e.ToString());
                 }
             }
         }
@@ -530,7 +537,7 @@ namespace BabySmash
                 if (result == MessageBoxResult.Yes)
                 {
                     Application.Current.Shutdown();
-                    System.Windows.Forms.Application.Restart();
+                    WinForms.Application.Restart();
                 }
             }
         }
