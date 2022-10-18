@@ -1,10 +1,16 @@
-﻿using System;
+﻿using BabySmash.Properties;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Deployment.Application;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Speech.Synthesis;
+using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,20 +20,12 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using BabySmash.Properties;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using WinForms = System.Windows.Forms;
 
 namespace BabySmash
 {
-    using System.Globalization;
-    using System.IO;
-    using System.Speech.Synthesis;
-    using System.Text;
-
-    using Newtonsoft.Json;
-
     public class Controller
     {
         [DllImport("user32.dll")]

@@ -9,6 +9,8 @@ namespace BabySmash
 {
     public partial class Options : Window
     {
+        public const string FeedbackLinkSite = "https://github.com/shanselman/babysmash/issues";
+
         public Options()
         {
             InitializeComponent();
@@ -65,7 +67,7 @@ namespace BabySmash
 
         private void FeedbackLink_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("http://feedback.babysmash.com");
+            Process.Start(FeedbackLinkSite);
         }
     }
 }
