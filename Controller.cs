@@ -1,5 +1,4 @@
 ﻿using BabySmash.Properties;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Speech.Synthesis;
 using System.Text;
 using System.Threading;
+using System.Web.Script.Serialization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -409,36 +409,43 @@ namespace BabySmash
             }
         }
 
+        private static Dictionary<string, string> localizedStrings;
+        private static string localizedStringsCultureName;
+
         /// <summary>
         /// Returns <param name="key"></param> if value or culture is not found.
         /// </summary>
         public static string GetLocalizedString(string key)
         {
+            // Only read the file once; cache the data. Unless the user had a way to change culture on the fly.
             CultureInfo keyboardLanguage = WinForms.InputLanguage.CurrentInputLanguage.Culture;
-            string culture = keyboardLanguage.Name;
-            string path = $@"Resources\Strings\{culture}.json";
-            string path2 = @"Resources\Strings\en-EN.json";
-            string jsonConfig = null;
-            if (File.Exists(path))
+            if (localizedStrings == null || localizedStringsCultureName != keyboardLanguage.Name)
             {
-                jsonConfig = File.ReadAllText(path);
-            }
-            else if (File.Exists(path2))
-            {
-                jsonConfig = File.ReadAllText(path2);
-            }
+                string culture = keyboardLanguage.Name;
+                string path = $@"Resources\Strings\{culture}.json";
+                string path2 = @"Resources\Strings\en-EN.json";
 
-            if (jsonConfig != null)
-            {
-                Dictionary<string, object> config = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonConfig);
-                if (config.ContainsKey(key))
+                string jsonConfig = null;
+                if (File.Exists(path))
                 {
-                    return config[key].ToString();
+                    jsonConfig = File.ReadAllText(path);
+                }
+                else if (File.Exists(path2))
+                {
+                    jsonConfig = File.ReadAllText(path2);
+                }
+
+                if (jsonConfig != null)
+                {
+                    localizedStrings = new JavaScriptSerializer().Deserialize<Dictionary<string, string>>(jsonConfig);
+                    localizedStringsCultureName = keyboardLanguage.Name;
                 }
             }
-            else
+
+            Debug.Assert(localizedStrings != null);
+            if (localizedStrings != null && localizedStrings.ContainsKey(key))
             {
-                Debug.Assert(false, "No file");
+                return localizedStrings[key];
             }
 
             return key;
