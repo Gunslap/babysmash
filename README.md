@@ -4,7 +4,8 @@ BabySmash
 ## This Fork
 I created this fork to update the .NET Framework version used to .NET 7 (using the [.NET Upgrade Assistant](https://learn.microsoft.com/en-us/dotnet/core/porting/upgrade-assistant-overview?WT.mc_id=dotnet-35129-website)), which should make it easier to port to other OSes in the future (ie: Linux).
 It compiles and runs fine, but I had to comment out some of the auto-updating functions that aren't available in .Net 7 and it still uses a few windows specific calls (ie: SpeechSynthesizer).
-I forked [David Rieman's fork](https://github.com/DavidRieman/babysmash), has he had already made a few nice improvements and updated the Framework to .NET 4.8 already.
+
+I forked [David Rieman's fork](https://github.com/DavidRieman/babysmash), has he had already made a few nice improvements and updated the Framework to .NET 4.8.
 
 ## Overview
 The BabySmash game for small kids.  
