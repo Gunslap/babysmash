@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Deployment.Application;
+using ClickOnceHelper;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;

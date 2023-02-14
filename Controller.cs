@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Deployment.Application;
+using ClickOnceHelper;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 using System.Speech.Synthesis;
 using System.Text;
 using System.Threading;
-using System.Web.Script.Serialization;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -55,6 +55,9 @@ namespace BabySmash
             get { return instance; }
         }
 
+        //Had to comment these functions out for now as this functionality isn't present in .NET 7
+        //
+        /*
         void deployment_CheckForUpdateCompleted(object sender, CheckForUpdateCompletedEventArgs e)
         {
             if (e.Error == null && e.UpdateAvailable)
@@ -75,13 +78,13 @@ namespace BabySmash
                 }
             }
         }
-
+        
         void deployment_UpdateProgressChanged(object sender, DeploymentProgressChangedEventArgs e)
         {
             MainWindow w = this.windows[0];
             w.updateProgress.Value = e.ProgressPercentage;
         }
-
+        */
         void deployment_UpdateCompleted(object sender, AsyncCompletedEventArgs e)
         {
             if (e.Error != null)
@@ -102,12 +105,12 @@ namespace BabySmash
             if (ApplicationDeployment.IsNetworkDeployed)
             {
                 deployment = ApplicationDeployment.CurrentDeployment;
-                deployment.UpdateCompleted += new System.ComponentModel.AsyncCompletedEventHandler(deployment_UpdateCompleted);
-                deployment.UpdateProgressChanged += deployment_UpdateProgressChanged;
-                deployment.CheckForUpdateCompleted += deployment_CheckForUpdateCompleted;
+                //deployment.UpdateCompleted += new System.ComponentModel.AsyncCompletedEventHandler(deployment_UpdateCompleted);
+                //deployment.UpdateProgressChanged += deployment_UpdateProgressChanged;
+                //deployment.CheckForUpdateCompleted += deployment_CheckForUpdateCompleted;
                 try
                 {
-                    deployment.CheckForUpdateAsync();
+                    //deployment.CheckForUpdateAsync();
                 }
                 catch (InvalidOperationException e)
                 {
@@ -155,7 +158,7 @@ namespace BabySmash
             Win32Audio.PlayWavResourceYield("EditedJackPlaysBabySmash.wav");
 
             string[] args = Environment.GetCommandLineArgs();
-            string ext = System.IO.Path.GetExtension(System.Reflection.Assembly.GetExecutingAssembly().CodeBase);
+            string ext = System.IO.Path.GetExtension(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
             if (ApplicationDeployment.IsNetworkDeployed && (ApplicationDeployment.CurrentDeployment.IsFirstRun || ApplicationDeployment.CurrentDeployment.UpdatedVersion != ApplicationDeployment.CurrentDeployment.CurrentVersion))
             {
@@ -437,7 +440,7 @@ namespace BabySmash
 
                 if (jsonConfig != null)
                 {
-                    localizedStrings = new JavaScriptSerializer().Deserialize<Dictionary<string, string>>(jsonConfig);
+                    localizedStrings = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonConfig);
                     localizedStringsCultureName = keyboardLanguage.Name;
                 }
             }
